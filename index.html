@@ -4,17 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="description" content="単なる棋譜のビューア">
+    <meta name="description" content="棋譜のビューア">
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@igo9x9" />
     <meta property="og:url" content="https://igo9x9.github.io/kihu/" />
     <meta property="og:title" content="棋譜ビューア" />
     <meta property="og:description" content="単なる棋譜のビューア" />
-    <meta property="og:image" content="https://igo9x9.github.io/scan/twitterimg.png" />
+    <meta property="og:image" content="https://igo9x9.github.io/kifu/twitterimg.png" />
     <title>棋譜ビューア</title>
     <link rel="icon" href="favicon.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
-    <script src="https://misohena.github.io/js_igo/igo.js?ver=20200514"></script>
+    <script src="igo.js"></script>
     <script src="https://misohena.github.io/js_igo/igo_view.js?ver=20200514"></script>
     <link rel="stylesheet" href="https://misohena.github.io/js_igo/igo.css">
     <style>
@@ -44,10 +44,17 @@
     <div id="game-name" style="font-size:1.2rem"></div>
     <div id="player-black" style="font-size:1.2rem"></div>
     <div id="player-white" style="font-size:1.2rem"></div>
+    <div id="komi" style="font-size:1.2rem"></div>
     <div id="handycap" style="font-size:1.2rem"></div>
     <div id="result" style="font-size:1.2rem"></div>
     <div style="text-align:center; margin-top: 10px;">
         <div id="js-igo"></div>
+    </div>
+
+    <div id="hide" class="hide">
+        <h2>棋譜ビューア</h2>
+        <textarea id="sgf" rows="20" style="width: 100%;padding:5px;" placeholder="ここにSGFデータを貼り付けてボタンを押すと、棋譜を再生するURLがクリップボードにコピーされます"></textarea>
+        <button id="copy" class="pure-button pure-button-primary">URLをクリップボードにコピー</button>
     </div>
 </div>
 
@@ -58,7 +65,7 @@
 
     const params = new URLSearchParams(window.location.search.replace("+", "@"));
 
-    let sgf;
+    let sgf = "";
 
     if (params.has("s")) {
         sgf = params.get("s");
@@ -82,6 +89,12 @@
         document.getElementById("player-white").innerText = "白番　：" + found[1];
     }
 
+    regex = /KM\[(.*?)\]/g;
+    found = regex.exec(sgf);
+    if (found) {
+        document.getElementById("komi").innerText = "コミ　：" + found[1];
+    }
+
     regex = /HA\[(.*?)\]/g;
     found = regex.exec(sgf);
     if (found) {
@@ -101,13 +114,14 @@
         } else if (result === "W@R") {
             text = "白中押勝ち";
         } else {
-            regex = /B@(.+?)/g;
-            found = regex.exec(sgf);
+            regex = /B@(.+)/g;
+            found = regex.exec(result);
+            console.log(found);
             if (found) {
                 text = "黒" + found[1] + "目勝ち";
             }　else {
-                regex = /W\+(.+)/g;
-                found = regex.exec(sgf);
+                regex = /W@(.+)/g;
+                found = regex.exec(result);
                 if (found) {
                     text = "白" + found[1] + "目勝ち";
                 }
@@ -119,18 +133,31 @@
         }
     }
 
-    const jsIgoGameView = new igo.GameView(
-        "js-igo",
-        sgf,
-        {
-            ui:{bottom: ["UndoRedo"]},
-            editable: false,
-            showMoveNumber: true,
-            path: 100,
-            gridMargin: 20,
-        }
-    );    
-    jsIgoGameView.fitBoardSizeToWindowAndParent();
+    if (sgf.length > 0) {
+        const jsIgoGameView = new igo.GameView(
+            "js-igo",
+            sgf,
+            {
+                ui:{bottom: ["UndoRedo"]},
+                editable: false,
+                showMoveNumber: true,
+                path: 100,
+                gridMargin: 20,
+            }
+        );    
+        jsIgoGameView.fitBoardSizeToWindowAndParent();
+    } else {
+        document.getElementById("hide").classList.remove("hide");
+    }
+
+
+    document.getElementById("copy").addEventListener("click", function() {
+        const sgf = document.getElementById("sgf").value;
+        const url = location.protocol + "://" + location.host + location.pathname + "?s=" + sgf;
+
+        navigator.clipboard.writeText(url);
+        alert("URLをクリップボードにコピーしました。");
+    });
 
 </script>
 
