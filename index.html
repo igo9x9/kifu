@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="description" content="棋譜のビューア">
+    <meta name="description" content="単なる棋譜のビューアです">
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@igo9x9" />
-    <meta property="og:url" content="https://igo9x9.github.io/kihu/" />
+    <meta property="og:url" content="https://igo9x9.github.io/kifu/" />
     <meta property="og:title" content="棋譜ビューア" />
     <meta property="og:description" content="単なる棋譜のビューア" />
     <meta property="og:image" content="https://igo9x9.github.io/kifu/twitterimg.png" />
@@ -40,28 +40,33 @@
     </style>
 </head>
 
-<div style="max-width: 392px;margin-left:auto;margin-right:auto;padding-top: 10px;">
-    <div id="game-name" style="font-size:1.2rem"></div>
-    <div id="player-black" style="font-size:1.2rem"></div>
-    <div id="player-white" style="font-size:1.2rem"></div>
-    <div id="komi" style="font-size:1.2rem"></div>
-    <div id="handycap" style="font-size:1.2rem"></div>
-    <div id="result" style="font-size:1.2rem"></div>
+<div style="max-width: 392px;margin-left:auto;margin-right:auto;margin-bottom:20px;padding: 10px;">
+    <div style="padding-left:5px;padding-right:5px;">
+        <div id="game-name" style="font-size:1.2rem"></div>
+        <div id="player-black" style="font-size:1.2rem"></div>
+        <div id="player-white" style="font-size:1.2rem"></div>
+        <div id="komi" style="font-size:1.2rem"></div>
+        <div id="handycap" style="font-size:1.2rem"></div>
+        <div id="result" style="font-size:1.2rem"></div>
+    </div>
     <div style="text-align:center; margin-top: 10px;">
         <div id="js-igo"></div>
     </div>
 
+    <div id="new" style="text-align: right;margin-top:20px;" class="hide">
+        <a id="newnew" href="#">新しく作る</a>
+    </div>
+
     <div id="hide" class="hide">
-        <h2>棋譜ビューア</h2>
-        <textarea id="sgf" rows="20" style="width: 100%;padding:5px;" placeholder="ここにSGFデータを貼り付けてボタンを押すと、棋譜を再生するURLがクリップボードにコピーされます"></textarea>
+        <div style="text-align: center;">
+            <textarea id="sgf" rows="20" style="width: 95%;padding:5px;" placeholder="ここにSGFデータを貼り付けてボタンを押すと、棋譜を再生するURLがクリップボードにコピーされます"></textarea>
+        </div>
         <button id="copy" class="pure-button pure-button-primary">URLをクリップボードにコピー</button>
     </div>
 </div>
 
 
 <script>
-
-    // const sgf = "(;SZ[13]AB[jd][dd][dj][jj][gg];W[kc];B[kd];W[jc];B[ic];W[ib];B[hc];W[hb];B[gc])";
 
     const params = new URLSearchParams(window.location.search.replace("+", "@"));
 
@@ -146,6 +151,9 @@
             }
         );    
         jsIgoGameView.fitBoardSizeToWindowAndParent();
+        document.getElementById("new").classList.remove("hide");
+        const url = "//" + location.host + location.pathname;
+        document.getElementById("newnew").href = url;
     } else {
         document.getElementById("hide").classList.remove("hide");
     }
