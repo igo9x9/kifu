@@ -120,13 +120,13 @@
         } else if (result === "W@R") {
             text = "白中押勝ち";
         } else {
-            regex = /B@(.+)/g;
+            regex = /B\+(.+)/g;
             found = regex.exec(result);
             console.log(found);
             if (found) {
                 text = "黒" + found[1] + "目勝ち";
             }　else {
-                regex = /W@(.+)/g;
+                regex = /W\+(.+)/g;
                 found = regex.exec(result);
                 if (found) {
                     text = "白" + found[1] + "目勝ち";
