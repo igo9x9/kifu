@@ -17,6 +17,7 @@
     <script src="igo.js"></script>
     <script src="https://misohena.github.io/js_igo/igo_view.js?ver=20200514"></script>
     <link rel="stylesheet" href="https://misohena.github.io/js_igo/igo.css">
+    <script src="url-comp.js"></script>
     <style>
         .button-success {
             background: rgb(28, 184, 65);
@@ -68,12 +69,12 @@
 
 <script>
 
-    const params = new URLSearchParams(window.location.search.replace("+", "@"));
+    const params = new URLSearchParams(window.location.search);
 
     let sgf = "";
 
     if (params.has("s")) {
-        sgf = params.get("s");
+        sgf = URLCompressor.expand(params.get("s"));
     }
 
     let regex = /GN\[(.*?)\]/g;
@@ -160,8 +161,8 @@
 
 
     document.getElementById("copy").addEventListener("click", function() {
-        const sgf = document.getElementById("sgf").value;
-        const url = location.protocol + "://" + location.host + location.pathname + "?s=" + sgf;
+        const sgf = document.getElementById("sgf").value.replace(/TL\[.*?\]/g, "");
+        const url = location.protocol + "://" + location.host + location.pathname + "?s=" + URLCompressor.compress(sgf);
 
         navigator.clipboard.writeText(url);
         alert("URLをクリップボードにコピーしました。");
